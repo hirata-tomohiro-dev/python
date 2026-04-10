@@ -1,0 +1,9 @@
+This directory is based on the official Python Software Foundation NuGet package.
+
+Package: python 3.11.9 (64-bit)
+URL: https://api.nuget.org/v3-flatcontainer/python/3.11.9/python.3.11.9.nupkg
+SHA256: 9283876d58c017e0e846f95b490da3bca0fc0a6ee1134b2870677cfb7eec3c67
+
+The package was extracted on macOS and committed in expanded form so that
+Windows users can place the directory and use Python without running an
+installer.
