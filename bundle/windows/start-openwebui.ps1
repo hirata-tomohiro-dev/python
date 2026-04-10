@@ -22,6 +22,7 @@ if (-not (Test-Path $OpenWebUiExe)) {
 }
 
 $env:DATA_DIR = Join-Path $RepoRoot 'data'
+$env:ENABLE_PERSISTENT_CONFIG = 'false'
 $env:OFFLINE_MODE = 'true'
 $env:HF_HUB_OFFLINE = '1'
 $env:DO_NOT_TRACK = 'true'
