@@ -1,0 +1,3 @@
+80475609a3cd9141a66a1d3934ab15195fcf3ca08d9e6df8a937c14565be4065  open_webui-0.8.12-py3-none-any.whl
+cf5dd91b83ffed16d9a0fb9e920a337e8a1c3fe008aaa77fd7542dd6c3ee966b  open_webui-0.8.12-py3-none-any.whl.part-00
+a9c5a933bb96cfc00a5bdc3b07dffae7aa06313f1c66b859d1ce5795d0783759  open_webui-0.8.12-py3-none-any.whl.part-01

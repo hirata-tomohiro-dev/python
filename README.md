@@ -2,6 +2,8 @@
 
 このリポジトリには、Windows 11 x64 向けの `Python 3.11.9` を、インストーラ不要でそのまま配置利用できる形で格納しています。
 
+加えて、同じ portable Python を使って `Open WebUI 0.8.12` をオフライン導入するための Windows 用 bundle も含めています。
+
 実体は、Python Software Foundation が公開している公式 `nuget` パッケージ `python 3.11.9 (64-bit)` を展開したものです。
 
 ## この構成で満たしていること
@@ -20,6 +22,8 @@
   - repo ルートから Python を起動するラッパー
 - `pip311.cmd`
   - repo ルートから `python -m pip` を呼ぶラッパー
+- `bundle/windows/`
+  - Open WebUI オフライン導入用の依存 wheel 群と起動スクリプト
 
 ## 使い方
 
@@ -43,6 +47,21 @@ pip311.cmd list
 python311.cmd -m venv .venv
 .venv\Scripts\python.exe -V
 ```
+
+## Open WebUI の利用
+
+この repo だけで、portable Python を使った `Open WebUI` のオフライン導入と起動ができます。
+
+PowerShell では repo ルートで以下を実行してください。
+
+```powershell
+.\bundle\windows\install-openwebui-offline.cmd
+.\bundle\windows\start-openwebui.cmd -DisableOllama -DisableOpenAI
+```
+
+詳細は以下を参照してください。
+
+- `docs/WINDOWS11_OPENWEBUI_PORTABLE_SETUP.md`
 
 ## 重要な注意
 

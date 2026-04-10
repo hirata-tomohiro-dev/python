@@ -1,0 +1,21 @@
+Open WebUI Windows 11 portable bundle: required files
+
+Preferred method
+- Download the entire repository as a ZIP from GitHub or clone the repository.
+- Keep the directory structure exactly as is.
+
+Files and directories required for offline installation and startup
+- python-3.11.9-win64/ (all files)
+- python311.cmd
+- pip311.cmd
+- docs/WINDOWS11_OPENWEBUI_PORTABLE_SETUP.md
+- bundle/windows/requirements-openwebui-offline.txt
+- bundle/windows/requirements-openwebui-offline.lock.txt
+- bundle/windows/install-openwebui-offline.cmd
+- bundle/windows/install-openwebui-offline.ps1
+- bundle/windows/start-openwebui.cmd
+- bundle/windows/start-openwebui.ps1
+- bundle/windows/vendor/SHA256SUMS.txt
+- bundle/windows/vendor/open-webui/open_webui-0.8.12-py3-none-any.whl.part-00
+- bundle/windows/vendor/open-webui/open_webui-0.8.12-py3-none-any.whl.part-01
+- bundle/windows/vendor/wheelhouse/ (all *.whl files in this directory)
