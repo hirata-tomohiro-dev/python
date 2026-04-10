@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$Host = '127.0.0.1',
+    [Alias('Host')]
+    [string]$ListenHost = '127.0.0.1',
     [int]$Port = 8080,
     [string]$OpenAIBaseUrl = '',
     [string]$OpenAIApiKey = '',
@@ -56,10 +57,10 @@ if ($DisableOpenAI -or [string]::IsNullOrWhiteSpace($OpenAIBaseUrl)) {
     }
 }
 
-Write-Host "Open WebUI will be available at http://$Host`:$Port" -ForegroundColor Green
+Write-Host "Open WebUI will be available at http://$ListenHost`:$Port" -ForegroundColor Green
 Push-Location $RepoRoot
 try {
-    & $OpenWebUiExe serve --host $Host --port $Port
+    & $OpenWebUiExe serve --host $ListenHost --port $Port
 } finally {
     Pop-Location
 }
