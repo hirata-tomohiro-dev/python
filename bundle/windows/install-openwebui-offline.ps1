@@ -86,6 +86,73 @@ function Join-WheelParts {
     }
 }
 
+function Apply-OpenWebUIOfflinePatch {
+    param([string]$VenvDir)
+
+    $MainPy = Join-Path $VenvDir 'Lib\site-packages\open_webui\main.py'
+    if (-not (Test-Path $MainPy)) {
+        throw "Installed Open WebUI main.py was not found: '$MainPy'"
+    }
+
+    $Marker = '# Offline bundle patch: skip retrieval bootstrap when bypass is enabled'
+    $Content = [System.IO.File]::ReadAllText($MainPy)
+    $Normalized = $Content -replace "`r`n", "`n"
+
+    if ($Normalized.Contains($Marker)) {
+        return
+    }
+
+    $OldBlock = (@"
+try:
+    app.state.ef = get_ef(app.state.config.RAG_EMBEDDING_ENGINE, app.state.config.RAG_EMBEDDING_MODEL)
+    if app.state.config.ENABLE_RAG_HYBRID_SEARCH and not app.state.config.BYPASS_EMBEDDING_AND_RETRIEVAL:
+        app.state.rf = get_rf(
+            app.state.config.RAG_RERANKING_ENGINE,
+            app.state.config.RAG_RERANKING_MODEL,
+            app.state.config.RAG_EXTERNAL_RERANKER_URL,
+            app.state.config.RAG_EXTERNAL_RERANKER_API_KEY,
+            app.state.config.RAG_EXTERNAL_RERANKER_TIMEOUT,
+        )
+    else:
+        app.state.rf = None
+except Exception as e:
+    log.error(f'Error updating models: {e}')
+    pass
+"@) -replace "`r`n", "`n"
+
+    $NewBlock = (@"
+try:
+    # Offline bundle patch: skip retrieval bootstrap when bypass is enabled
+    if app.state.config.BYPASS_EMBEDDING_AND_RETRIEVAL:
+        app.state.ef = None
+        app.state.rf = None
+    else:
+        app.state.ef = get_ef(app.state.config.RAG_EMBEDDING_ENGINE, app.state.config.RAG_EMBEDDING_MODEL)
+        if app.state.config.ENABLE_RAG_HYBRID_SEARCH:
+            app.state.rf = get_rf(
+                app.state.config.RAG_RERANKING_ENGINE,
+                app.state.config.RAG_RERANKING_MODEL,
+                app.state.config.RAG_EXTERNAL_RERANKER_URL,
+                app.state.config.RAG_EXTERNAL_RERANKER_API_KEY,
+                app.state.config.RAG_EXTERNAL_RERANKER_TIMEOUT,
+            )
+        else:
+            app.state.rf = None
+except Exception as e:
+    log.error(f'Error updating models: {e}')
+    pass
+"@) -replace "`r`n", "`n"
+
+    if (-not $Normalized.Contains($OldBlock)) {
+        throw "Failed to apply the offline startup patch to '$MainPy'. The expected Open WebUI 0.8.12 code block was not found."
+    }
+
+    Write-Step 'Applying offline patch to Open WebUI package'
+    $Patched = $Normalized.Replace($OldBlock, $NewBlock)
+    $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($MainPy, $Patched, $Utf8NoBom)
+}
+
 $pythonExe = Get-Python311
 if (-not $pythonExe) {
     throw "Python 3.11 was not found. Ensure '$PortablePythonExe' exists or make Python 3.11 available, then rerun this script."
@@ -121,6 +188,8 @@ Write-Step 'Installing offline dependency wheelhouse'
 
 Write-Step 'Installing Open WebUI wheel'
 & $venvPythonExe -m pip install --no-index $WheelPath --no-deps
+
+Apply-OpenWebUIOfflinePatch -VenvDir $VenvDir
 
 Write-Step 'Offline installation completed'
 Write-Host "Run '.\bundle\windows\start-openwebui.cmd' to start Open WebUI." -ForegroundColor Green
